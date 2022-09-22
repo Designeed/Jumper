@@ -1,0 +1,79 @@
+﻿<Window x:Class="Jumper.Presentation.Windows.AgentAddWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Jumper.Presentation.Windows"
+        mc:Ignorable="d"
+        Background="White"
+        FontSize="15"
+        FontFamily="Comic Sans MS" Height="550" Width="500">
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="83*"/>
+            <ColumnDefinition Width="300*"/>
+        </Grid.ColumnDefinitions>
+        <ScrollViewer Grid.ColumnSpan="2">
+            <StackPanel Margin="10,20,10,0">
+                <DockPanel Margin="0,0,0,20">
+                    <TextBlock Text="Наименование" Margin="0,0,20,0"/>
+                    <TextBox x:Name="TextBoxAddTitle" Width="220" HorizontalAlignment="Right" />
+                </DockPanel>
+
+                <DockPanel Margin="0,0,0,20">
+                    <TextBlock Text="Тип" Margin="0,0,20,0"/>
+                    <ComboBox x:Name="ComboBoxAddType" Width="220" HorizontalAlignment="Right">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Title}"/>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                </DockPanel>
+
+                <DockPanel Margin="0,0,0,20">
+                    <TextBlock Text="Адрес" Margin="0,0,20,0"/>
+                    <TextBox x:Name="TextBoxAddAddres" Width="220" HorizontalAlignment="Right" />
+                </DockPanel>
+
+                <DockPanel Margin="0,0,0,20">
+                    <TextBlock Text="ИНН" Margin="0,0,20,0"/>
+                    <TextBox x:Name="TextBoxAddInn" Width="220" HorizontalAlignment="Right" />
+                </DockPanel>
+
+                <DockPanel Margin="0,0,0,20">
+                    <TextBlock Text="КПП" Margin="0,0,20,0"/>
+                    <TextBox x:Name="TextBoxAddKpp" Width="220" HorizontalAlignment="Right" />
+                </DockPanel>
+
+                <DockPanel Margin="0,0,0,20">
+                    <TextBlock Text="Директор" Margin="0,0,20,0"/>
+                    <TextBox x:Name="TextBoxAddDirector" Width="220" HorizontalAlignment="Right" />
+                </DockPanel>
+
+                <DockPanel Margin="0,0,0,20">
+                    <TextBlock Text="Телефон" Margin="0,0,20,0"/>
+                    <TextBox x:Name="TextBoxAddPhone" Width="220" HorizontalAlignment="Right" />
+                </DockPanel>
+
+                <DockPanel Margin="0,0,0,20">
+                    <TextBlock Text="Почта" Margin="0,0,20,0"/>
+                    <TextBox x:Name="TextBoxAddMail" Width="220" HorizontalAlignment="Right" />
+                </DockPanel>
+
+                <DockPanel Margin="0,0,0,20">
+                    <TextBlock Text="Фото" Margin="0,0,20,0"/>
+                    <Button x:Name="ButtonAddLogo" Content="Выбрать..." Width="100" HorizontalAlignment="Right" Click="ButtonAddLogo_Click" />
+                </DockPanel>
+
+                <DockPanel Margin="0,0,0,20">
+                    <TextBlock Text="Приоритет" Margin="0,0,20,0"/>
+                    <TextBox x:Name="TextBoxAddPriority" Width="220" HorizontalAlignment="Right" />
+                </DockPanel>
+
+                <Button x:Name="ButtonReady" Content="Готово" HorizontalAlignment="Center" Margin="0,0,0,40" Background="#43DCFE" Padding="40,0" Click="ButtonReady_Click"/>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Window>

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Jumper.Presentation.Pages;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -23,6 +24,7 @@ namespace Jumper
         public MainWindow()
         {
             InitializeComponent();
+            MainFrame.Content = new AgentPage();
         }
     }
 }
