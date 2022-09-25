@@ -28,7 +28,7 @@
             </GroupBox>
 
             <GroupBox Header="Сортировка" Grid.Column="1" Margin="10, 0, 10, 0">
-                <ComboBox Name="ComboBoxSortType" FontSize="20" DropDownClosed="ComboBoxSortType_DropDownClosed">
+                <ComboBox Name="ComboBoxSortType" SelectedIndex="0" FontSize="20" DropDownClosed="ComboBoxSortType_DropDownClosed">
                     <ComboBoxItem Content="А-Я"/>
                     <ComboBoxItem Content="Я-А"/>
                 </ComboBox>
@@ -47,10 +47,10 @@
             </GroupBox>
         </Grid>
 
-        <ListView Name="ListView" Grid.Row="1" SelectionMode="Single">
+        <ListView Name="AgentListView" Grid.Row="1" SelectionMode="Single">
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <Grid>
+                    <Grid Name="GridBackground">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="600"/>
