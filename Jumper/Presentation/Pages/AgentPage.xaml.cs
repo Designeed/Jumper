@@ -30,7 +30,7 @@ namespace Jumper.Presentation.Pages
         private int _SortParameter = 0;
         private int _FilterParameter = 0;
 
-        private int _TotalPages = new JumperContext().Agents.ToList().Count / 10;
+        private int _TotalPages = (new JumperContext().Agents.ToList().Count / 10);
         private int _ItemsPerPage = 10;
         private int _PageNumber = 1;
         public int PageNumber
@@ -43,6 +43,10 @@ namespace Jumper.Presentation.Pages
                     _PageNumber = value;
                     TextBoxtPageNumber.Text = PageNumber.ToString();
                     AgentListView.ItemsSource = GetListAgentPerPage(value);
+
+                    Decorator border = VisualTreeHelper.GetChild(AgentListView, 0) as Decorator;
+                    ScrollViewer scroll = border.Child as ScrollViewer;
+                    scroll.ScrollToTop();
                 }
             }
         }
@@ -50,21 +54,16 @@ namespace Jumper.Presentation.Pages
         public AgentPage()
         {
             InitializeComponent();
-            LoadAgent();
-        }
-
-        private void LoadAgent()
-        {
             AgentListView.ItemsSource = GetListAgentPerPage(_PageNumber);
         }
 
         private List<Agent> GetListAgentPerPage(int PageNumber)
             => _ListAgent.GetRange((PageNumber - 1) * _ItemsPerPage, _ItemsPerPage);
-
+        
         private void ButtonAddClick(object sender, RoutedEventArgs e)
         {
             new AgentAddWindow().ShowDialog();
-            LoadAgent();
+            _ListAgent = new JumperContext().Agents.ToList();
         }
 
         private void ButtonEditClick(object sender, RoutedEventArgs e)
@@ -72,7 +71,7 @@ namespace Jumper.Presentation.Pages
             if (AgentListView.SelectedIndex != -1)
             {
                 new AgentEditWindow(((Agent)AgentListView.SelectedItem).Id).ShowDialog();
-                LoadAgent();
+                _ListAgent = new JumperContext().Agents.ToList();
             }
         }
 
@@ -85,7 +84,7 @@ namespace Jumper.Presentation.Pages
                 dbContext.Remove(SelectedAgent);
                 dbContext.SaveChanges();
 
-                LoadAgent();
+                _ListAgent = new JumperContext().Agents.ToList();
             }
         }
 
@@ -127,6 +126,13 @@ namespace Jumper.Presentation.Pages
         private void NextButton_Click(object sender, RoutedEventArgs e)
         {
             PageNumber++;
+        }
+
+        private void ResetScrollInListView()
+        {
+            Decorator border = VisualTreeHelper.GetChild(AgentListView, 0) as Decorator;
+            ScrollViewer scroll = border.Child as ScrollViewer;
+            scroll.ScrollToTop();
         }
     }
 }
