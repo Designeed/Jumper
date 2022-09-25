@@ -25,12 +25,8 @@ namespace Jumper.Presentation.Pages
     /// </summary>
     public partial class AgentPage : Page
     {
-        private List<Agent> _ListAgent = new JumperContext().Agents.ToList();
-        private string _SearchParameter = String.Empty;
-        private int _SortParameter = 0;
-        private int _FilterParameter = 0;
-
-        private int _TotalPages = (new JumperContext().Agents.ToList().Count / 10);
+        private List<Agent> _ListAgent = new JumperContext().Agents.OrderBy(agent => agent.Title).ToList();
+        private int _TotalPages = (int)Math.Ceiling(((double)new JumperContext().Agents.ToList().Count / 10d));
         private int _ItemsPerPage = 10;
         private int _PageNumber = 1;
         public int PageNumber
@@ -58,12 +54,18 @@ namespace Jumper.Presentation.Pages
         }
 
         private List<Agent> GetListAgentPerPage(int PageNumber)
-            => _ListAgent.GetRange((PageNumber - 1) * _ItemsPerPage, _ItemsPerPage);
-        
+            => _ListAgent.Skip((PageNumber - 1) * _ItemsPerPage).Take(_ItemsPerPage).ToList();
+
+        private void UpdateList()
+        {
+            _ListAgent = new JumperContext().Agents.OrderBy(agent => agent.Title).ToList();
+            AgentListView.ItemsSource = _ListAgent;
+        }
+ 
         private void ButtonAddClick(object sender, RoutedEventArgs e)
         {
             new AgentAddWindow().ShowDialog();
-            _ListAgent = new JumperContext().Agents.ToList();
+            UpdateList();
         }
 
         private void ButtonEditClick(object sender, RoutedEventArgs e)
@@ -71,7 +73,7 @@ namespace Jumper.Presentation.Pages
             if (AgentListView.SelectedIndex != -1)
             {
                 new AgentEditWindow(((Agent)AgentListView.SelectedItem).Id).ShowDialog();
-                _ListAgent = new JumperContext().Agents.ToList();
+                UpdateList();
             }
         }
 
@@ -84,25 +86,23 @@ namespace Jumper.Presentation.Pages
                 dbContext.Remove(SelectedAgent);
                 dbContext.SaveChanges();
 
-                _ListAgent = new JumperContext().Agents.ToList();
+                UpdateList();
+                MessageBox.Show("Агент удален");
             }
         }
 
         private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            _SearchParameter = SearchTxtBox.Text;
             SetFilterAndSortType();
         }
 
         private void ComboBoxFilters_DropDownClosed(object sender, EventArgs e)
         {
-            _FilterParameter = ComboBoxFilters.SelectedIndex;
             SetFilterAndSortType();
         }
 
         private void ComboBoxSortType_DropDownClosed(object sender, EventArgs e)
         {
-            _SortParameter = ComboBoxSortType.SelectedIndex;
             SetFilterAndSortType();
         }
 
@@ -112,7 +112,7 @@ namespace Jumper.Presentation.Pages
             TextBoxtPageNumber.Text = "1";
 
             var filteredList = GetListAgentPerPage(PageNumber)
-                    .Where(agent => $"{agent.Title} {agent.Email} {agent.Phone}".Contains(_SearchParameter))
+                    .Where(agent => $"{agent.Title} {agent.Email} {agent.Phone}".Contains(SearchTxtBox.Text))
                     .Where(agent => ComboBoxFilters.SelectedIndex == 0 || agent.AgentType.Title == ComboBoxFilters.Text);
 
             AgentListView.ItemsSource = ComboBoxSortType.SelectedIndex == 0 ? filteredList.OrderBy(agent => agent.Title) : filteredList.OrderByDescending(agent => agent.Title);
@@ -126,13 +126,6 @@ namespace Jumper.Presentation.Pages
         private void NextButton_Click(object sender, RoutedEventArgs e)
         {
             PageNumber++;
-        }
-
-        private void ResetScrollInListView()
-        {
-            Decorator border = VisualTreeHelper.GetChild(AgentListView, 0) as Decorator;
-            ScrollViewer scroll = border.Child as ScrollViewer;
-            scroll.ScrollToTop();
         }
     }
 }

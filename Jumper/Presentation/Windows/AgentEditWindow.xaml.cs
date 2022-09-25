@@ -22,7 +22,7 @@ namespace Jumper.Presentation.Windows
     /// </summary>
     public partial class AgentEditWindow : Window
     {
-        private string _LogoPath;
+        private string _LogoPath = "\\agents\\picture.png";
         private Agent _Agent;
 
         public AgentEditWindow(int id)
@@ -74,7 +74,7 @@ namespace Jumper.Presentation.Windows
 
             open.Filter = "Image Files(*.jpg; *.jpeg; *.gif; *.bmp)|*.jpg; *.jpeg; *.gif; *.bmp; *.png";
             if (open.ShowDialog() == true)
-                _LogoPath = "\\" + $"{ open.SafeFileName} ";
+                _LogoPath = "\\agents\\" + $"{open.SafeFileName} ";
         }
 
         private void SetTextField()
