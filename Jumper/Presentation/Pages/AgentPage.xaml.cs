@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
@@ -24,11 +25,27 @@ namespace Jumper.Presentation.Pages
     /// </summary>
     public partial class AgentPage : Page
     {
-        private List<Agent> _ListAgent;
+        private List<Agent> _ListAgent = new JumperContext().Agents.ToList();
         private string _SearchParameter = String.Empty;
         private int _SortParameter = 0;
         private int _FilterParameter = 0;
-        private const string _PATH = @"D:\Пользователи\Рабочий стол\Попрыженок - агенты";
+
+        private int _TotalPages = new JumperContext().Agents.ToList().Count / 10;
+        private int _ItemsPerPage = 10;
+        private int _PageNumber = 1;
+        public int PageNumber
+        {
+            get => _PageNumber;
+            set
+            {
+                if (value >= 1 && value <= _TotalPages)
+                {
+                    _PageNumber = value;
+                    TextBoxtPageNumber.Text = PageNumber.ToString();
+                    AgentListView.ItemsSource = GetListAgentPerPage(value);
+                }
+            }
+        }
 
         public AgentPage()
         {
@@ -38,13 +55,11 @@ namespace Jumper.Presentation.Pages
 
         private void LoadAgent()
         {
-            _ListAgent = new JumperContext().Agents.ToList();
-
-            foreach (var agent in _ListAgent)
-                agent.Logo = String.Concat(_PATH, agent.Logo);
-
-            AgentListView.ItemsSource = _ListAgent;
+            AgentListView.ItemsSource = GetListAgentPerPage(_PageNumber);
         }
+
+        private List<Agent> GetListAgentPerPage(int PageNumber)
+            => _ListAgent.GetRange((PageNumber - 1) * _ItemsPerPage, _ItemsPerPage);
 
         private void ButtonAddClick(object sender, RoutedEventArgs e)
         {
@@ -69,6 +84,7 @@ namespace Jumper.Presentation.Pages
                 var SelectedAgent = dbContext.Agents.FirstOrDefault(Agent => Agent.Id == ((Agent)AgentListView.SelectedItem).Id);
                 dbContext.Remove(SelectedAgent);
                 dbContext.SaveChanges();
+
                 LoadAgent();
             }
         }
@@ -93,25 +109,24 @@ namespace Jumper.Presentation.Pages
 
         private void SetFilterAndSortType()
         {
-            if (_SortParameter == 0 && _FilterParameter == 0)
-                AgentListView.ItemsSource = _ListAgent
+            PageNumber = 1;
+            TextBoxtPageNumber.Text = "1";
+
+            var filteredList = GetListAgentPerPage(PageNumber)
                     .Where(agent => $"{agent.Title} {agent.Email} {agent.Phone}".Contains(_SearchParameter))
-                    .OrderBy(agent => agent.Title);
+                    .Where(agent => ComboBoxFilters.SelectedIndex == 0 || agent.AgentType.Title == ComboBoxFilters.Text);
 
-            if (_SortParameter == 1 && _FilterParameter == 0)
-                AgentListView.ItemsSource = _ListAgent
-                    .Where(agent => $"{agent.Title} {agent.Email} {agent.Phone}".Contains(_SearchParameter))
-                    .OrderByDescending(agent => agent.Title);
+            AgentListView.ItemsSource = ComboBoxSortType.SelectedIndex == 0 ? filteredList.OrderBy(agent => agent.Title) : filteredList.OrderByDescending(agent => agent.Title);
+        }
 
-            if (_SortParameter == 0 && _FilterParameter != 0)
-                AgentListView.ItemsSource = _ListAgent
-                    .Where(agent => $"{agent.Title} {agent.Email} {agent.Phone}".Contains(_SearchParameter) && agent.AgentType.Title == ComboBoxFilters.Text)
-                    .OrderBy(agent => agent.Title);
+        private void PreviousButton_Click(object sender, RoutedEventArgs e)
+        {
+            PageNumber--;
+        }
 
-            if (_SortParameter == 1 && _FilterParameter != 0)
-                AgentListView.ItemsSource = _ListAgent
-                    .Where(agent => $"{agent.Title} {agent.Email} {agent.Phone}".Contains(_SearchParameter) && agent.AgentType.Title == ComboBoxFilters.Text)
-                    .OrderByDescending(agent => agent.Title);
+        private void NextButton_Click(object sender, RoutedEventArgs e)
+        {
+            PageNumber++;
         }
     }
 }

@@ -56,7 +56,6 @@ namespace Jumper.Presentation.Windows
                 _Agent.Email = TextBoxEditMail.Text;
                 _Agent.Logo = _LogoPath;
                 _Agent.Priority = Convert.ToInt32(TextBoxEditPriority.Text);
-
                 dbContext.Agents.Update(_Agent);
                 dbContext.SaveChanges();
 

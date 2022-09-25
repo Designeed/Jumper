@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows.Media;
 
 namespace Jumper
 {
     public partial class Agent
     {
+        private const string _PATH = @"D:\Пользователи\Рабочий стол\Попрыженок - агенты";
+
         public Agent()
         {
             AgentPriorityHistories = new HashSet<AgentPriorityHistory>();
@@ -22,9 +25,16 @@ namespace Jumper
         public string? DirectorName { get; set; }
         public string Phone { get; set; } = null!;
         public string? Email { get; set; }
-        public string? Logo { get; set; }
+
+        private string? _Logo = null!;
+        public string? Logo 
+        { 
+            get => String.Concat(_PATH, _Logo); 
+            set { _Logo = value; } 
+        }
         public int Priority { get; set; }
         public string Discount => GetDiscount();
+        public Color BackgroundColor => Discount.Contains("20") ? Colors.LightGreen : Colors.Transparent;
         public decimal SumSale => ProductSales.Sum(sum => sum.ProductCount * sum.Product.MinCostForAgent);
         public int ProductCount => ProductSales.Select(sale => sale.ProductCount).Sum();
 
